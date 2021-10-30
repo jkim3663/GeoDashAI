@@ -72,4 +72,4 @@ class GeometryDash(gym.Env):
 
     @property
     def done(self):
-        return self.observation()[200][300] == 255
+        return self.observation[200][300] == 255
