@@ -1,5 +1,6 @@
 import io
 import logging
+import time
 from enum import Enum
 from typing import Any, Callable, Dict, Tuple
 
@@ -38,23 +39,25 @@ class GeometryDash(gym.Env):
         self.driver.set_window_size(720, 600)
         self.driver.get('https://games-online.io/game/Geometry_Jump/')
         try:
-            WebDriverWait(self.driver, 30).until(
+            WebDriverWait(self.driver, 60).until(
                 EC.presence_of_element_located((By.XPATH, '//div[@id="loader"][contains(@style, "display: none")]'))
             )
         except:
             self.driver.quit()
+            raise TimeoutError()
 
     def step(self, action: int) -> Tuple[np.array, float, bool, Dict[str, Any]]:
         pass
         # return observation, reward, done, info
 
     def reset(self) -> np.array:
-        while self.done:
-            self.driver.implicitly_wait(0.5)
+        while not self.retry_clickable:
+            time.sleep(0.35)
         ActionChains(self.driver)\
             .move_to_element_with_offset(self.driver.find_element(By.TAG_NAME, 'body'), 300, 350) \
             .click() \
             .perform()
+        time.sleep(1.35)
         return self.observation
 
     def render(self, mode: str='human'):
@@ -68,8 +71,16 @@ class GeometryDash(gym.Env):
     
     @property
     def observation(self) -> np.array:
-        return np.asarray(Image.open(io.BytesIO(self.driver.get_screenshot_as_png())).convert('L')).reshape(self.observation_space.shape)
+        return np.array(Image.open(io.BytesIO(self.driver.get_screenshot_as_png())).convert('L')).reshape(self.observation_space.shape)
 
     @property
-    def done(self):
-        return self.observation[200][300] == 255
+    def done(self) -> bool:
+        return not np.any(self.observation.squeeze(-1)[:,210:240] == 186)
+    
+    @property
+    def retry_clickable(self) -> bool:
+        return self.observation[200][300][0] == 255
+
+    @property
+    def is_flying(self) -> bool:
+        return not np.any(self.observation.squeeze(-1)[:,210:240] == 218)
