@@ -30,7 +30,7 @@ class GeometryDash(gym.Env):
         self.observation_space = spaces.Box(
             low=0, 
             high=255, 
-            shape=(476, 720, 3), 
+            shape=(476, 720, 1),
             dtype=np.uint8
             ) #Images
 
@@ -38,7 +38,7 @@ class GeometryDash(gym.Env):
         self.driver.set_window_size(720, 600)
         self.driver.get('https://games-online.io/game/Geometry_Jump/')
         try:
-            WebDriverWait(self.driver, 10).until(
+            WebDriverWait(self.driver, 30).until(
                 EC.presence_of_element_located((By.XPATH, '//div[@id="loader"][contains(@style, "display: none")]'))
             )
         except:
@@ -68,7 +68,7 @@ class GeometryDash(gym.Env):
     
     @property
     def observation(self) -> np.array:
-        return np.asarray(Image.open(io.BytesIO(self.driver.get_screenshot_as_png())).convert('L'))
+        return np.asarray(Image.open(io.BytesIO(self.driver.get_screenshot_as_png())).convert('L')).reshape(self.observation_space.shape)
 
     @property
     def done(self):
