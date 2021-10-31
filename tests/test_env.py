@@ -1,10 +1,20 @@
 import pytest
 from geodashai.env import GeometryDash
 from selenium.webdriver.common.by import By
+import unittest
 
-@pytest.fixture
-def env():
-    return GeometryDash()
+@pytest.fixture(scope='class')
+def driver(request):
+    request.cls.env = GeometryDash()
+    yield
+    request.cls.env.close()
 
-def test_env_init(env):
-    assert env.driver.current_url == 'https://games-online.io/game/Geometry_Jump/'
+@pytest.mark.usefixtures('driver')
+class EnvTest(unittest.TestCase):
+    def test_env_init(self):
+        assert self.env.driver.current_url == 'https://games-online.io/game/Geometry_Jump/'
+        assert self.env.driver.get_window_size()['width'] == 720 and \
+            self.env.driver.get_window_size()['height'] == 600
+    
+    def test_env_observation(self):
+        assert self.env.observation.shape == self.env.observation_space.shape
