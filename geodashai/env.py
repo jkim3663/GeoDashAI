@@ -26,7 +26,7 @@ class GeometryDash(gym.Env):
         super(GeometryDash, self).__init__()
 
         options = Options()
-        options.add_argument('window-size=720,560')
+        options.add_argument('window-size=1024,768')
         options.add_experimental_option("excludeSwitches", ['enable-automation'])
         self.driver = webdriver.Chrome(
             service=Service(ChromeDriverManager().install()),
@@ -38,7 +38,7 @@ class GeometryDash(gym.Env):
         self.observation_space = spaces.Box(
             low=0, 
             high=255, 
-            shape=(481, 720, 1),
+            shape=(689, 1024, 1),
             dtype=np.uint8
             ) #Images
 
