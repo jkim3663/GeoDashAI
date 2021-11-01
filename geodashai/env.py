@@ -16,6 +16,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.options import Options
 
 class GeometryDash(gym.Env):
     """Custom Environment that follows gym interface"""
@@ -24,7 +25,12 @@ class GeometryDash(gym.Env):
     def __init__(self):
         super(GeometryDash, self).__init__()
 
-        self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+        options = Options()
+        options.add_argument('window-size=720,600')
+        self.driver = webdriver.Chrome(
+            service=Service(ChromeDriverManager().install()),
+            options=options
+            )
         self._init_browser()
 
         self.action_space = spaces.Discrete(2) # Jump, No action
@@ -36,7 +42,6 @@ class GeometryDash(gym.Env):
             ) #Images
 
     def _init_browser(self) -> None:
-        self.driver.set_window_size(720, 600)
         self.driver.get('https://games-online.io/game/Geometry_Jump/')
         try:
             WebDriverWait(self.driver, 60).until(
