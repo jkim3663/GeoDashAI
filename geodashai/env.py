@@ -27,6 +27,9 @@ class GeometryDash(gym.Env):
 
         options = Options()
         options.add_argument('window-size=1024,768')
+        options.add_argument("disable-extensions")
+        options.add_argument("disable-popup-blocking");
+        options.add_argument("disable-default-apps");
         options.add_experimental_option("excludeSwitches", ['enable-automation'])
         self.driver = webdriver.Chrome(
             service=Service(ChromeDriverManager().install()),
