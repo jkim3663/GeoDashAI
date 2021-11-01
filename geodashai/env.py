@@ -9,6 +9,7 @@ import numpy as np
 from gym import spaces
 from PIL import Image
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
@@ -16,7 +17,6 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.options import Options
 
 class GeometryDash(gym.Env):
     """Custom Environment that follows gym interface"""
@@ -76,7 +76,9 @@ class GeometryDash(gym.Env):
     
     @property
     def observation(self) -> np.array:
-        return np.array(Image.open(io.BytesIO(self.driver.get_screenshot_as_png())).convert('L')).reshape(self.observation_space.shape)
+        img = Image.open(io.BytesIO(self.driver.get_screenshot_as_png())).convert('L')
+        img = img.resize((self.observation_space.shape[1], self.observation_space.shape[0]))
+        return np.array(img).reshape(self.observation_space.shape)
 
     @property
     def done(self) -> bool:
