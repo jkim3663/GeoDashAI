@@ -88,8 +88,6 @@ class GeometryDash(gym.Env):
     @property
     def observation(self) -> np.array:
         img = Image.open(io.BytesIO(self.driver.get_screenshot_as_png())).convert('L')
-        print(img.size)
-        print(self.driver.get_window_size())
         return np.array(img).reshape(self.observation_space.shape)
 
     @property
@@ -103,6 +101,3 @@ class GeometryDash(gym.Env):
     @property
     def is_flying(self) -> bool:
         return not np.any(self.observation.squeeze(-1)[:,210:240] == 218)
-
-temp = GeometryDash()
-print(temp.observation)
