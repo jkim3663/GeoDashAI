@@ -50,7 +50,10 @@ class GeometryDash(gym.Env):
         img = Image.open(io.BytesIO(self.driver.get_screenshot_as_png())).convert('L')
         h_diff= 689 - img.size[1]
         w_diff = 1024 - img.size[0]
-        
+
+        if h_diff != 0 or w_diff != 0:
+            self.driver.set_window_size(1024 + w_diff, 768 + w_diff - 7)
+            
         try:
             WebDriverWait(self.driver, 60).until(
                 EC.presence_of_element_located((By.XPATH, '//div[@id="loader"][contains(@style, "display: none")]'))
