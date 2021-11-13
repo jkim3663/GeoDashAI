@@ -24,7 +24,7 @@ class GeometryDash(gym.Env):
 
     def __init__(self):
         super(GeometryDash, self).__init__()
-
+        
         options = Options()
         options.add_argument('window-size=1024,768')
         options.add_argument("disable-extensions")
@@ -47,6 +47,10 @@ class GeometryDash(gym.Env):
 
     def _init_browser(self) -> None:
         self.driver.get('https://games-online.io/game/Geometry_Jump/')
+        img = Image.open(io.BytesIO(self.driver.get_screenshot_as_png())).convert('L')
+        h_diff= 689 - img.size[1]
+        w_diff = 1024 - img.size[0]
+        
         try:
             WebDriverWait(self.driver, 60).until(
                 EC.presence_of_element_located((By.XPATH, '//div[@id="loader"][contains(@style, "display: none")]'))
@@ -81,6 +85,8 @@ class GeometryDash(gym.Env):
     @property
     def observation(self) -> np.array:
         img = Image.open(io.BytesIO(self.driver.get_screenshot_as_png())).convert('L')
+        print(img.size)
+        print(self.driver.get_window_size())
         return np.array(img).reshape(self.observation_space.shape)
 
     @property
@@ -94,3 +100,6 @@ class GeometryDash(gym.Env):
     @property
     def is_flying(self) -> bool:
         return not np.any(self.observation.squeeze(-1)[:,210:240] == 218)
+
+temp = GeometryDash()
+print(temp.observation)
