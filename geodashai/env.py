@@ -26,33 +26,27 @@ class GeometryDash(gym.Env):
         super(GeometryDash, self).__init__()
         
         options = Options()
-        options.add_argument('window-size=1024,768')
         options.add_argument("disable-extensions")
-        options.add_argument("disable-popup-blocking");
-        options.add_argument("disable-default-apps");
+        options.add_argument("disable-popup-blocking")
+        options.add_argument("disable-default-apps")
         options.add_experimental_option("excludeSwitches", ['enable-automation'])
         self.driver = webdriver.Chrome(
             service=Service(ChromeDriverManager().install()),
             options=options
             )
-        self._init_browser()
 
         self.action_space = spaces.Discrete(2) # Jump, No action
         self.observation_space = spaces.Box(
             low=0, 
             high=255, 
-            shape=(689, 1024, 1),
+            shape=(842, 1200, 1),
             dtype=np.uint8
             ) #Images
 
+        self._init_browser()
+
     def _init_browser(self) -> None:
         self.driver.get('https://games-online.io/game/Geometry_Jump/')
-        img = Image.open(io.BytesIO(self.driver.get_screenshot_as_png())).convert('L')
-        h_diff= 689 - img.size[1]
-        w_diff = 1024 - img.size[0]
-
-        if h_diff != 0 or w_diff != 0:
-            self.driver.set_window_size(1024 + w_diff, 768 + w_diff - 7)
             
         try:
             WebDriverWait(self.driver, 60).until(
@@ -61,6 +55,10 @@ class GeometryDash(gym.Env):
         except:
             self.driver.quit()
             raise TimeoutError()
+
+        self.driver.set_window_size(600, 500)
+        self.driver.execute_script('document.getElementById("#canvas").width=1200')
+        self.driver.execute_script('document.getElementById("#canvas").height=842')
 
     def step(self, action: int) -> Tuple[np.array, float, bool, Dict[str, Any]]:
         pass
@@ -88,7 +86,7 @@ class GeometryDash(gym.Env):
     @property
     def observation(self) -> np.array:
         img = Image.open(io.BytesIO(self.driver.get_screenshot_as_png())).convert('L')
-        return np.array(img).reshape(self.observation_space.shape)
+        return np.array(img)
 
     @property
     def done(self) -> bool:
