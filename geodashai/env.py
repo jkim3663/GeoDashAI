@@ -39,7 +39,7 @@ class GeometryDash(gym.Env):
         self.observation_space = spaces.Box(
             low=0, 
             high=255, 
-            shape=(842, 1200, 1),
+            shape=(401, 600, 1),
             dtype=np.uint8
             ) #Images
 
@@ -56,9 +56,9 @@ class GeometryDash(gym.Env):
             self.driver.quit()
             raise TimeoutError()
 
-        self.driver.set_window_size(600, 500)
-        self.driver.execute_script('document.getElementById("#canvas").width=1200')
-        self.driver.execute_script('document.getElementById("#canvas").height=842')
+        self.driver.set_window_size(600, 480)
+        self.driver.execute_script('document.getElementById("#canvas").width=600')
+        self.driver.execute_script('document.getElementById("#canvas").height=400')
 
     def step(self, action: int) -> Tuple[np.array, float, bool, Dict[str, Any]]:
         pass
