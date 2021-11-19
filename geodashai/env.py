@@ -2,7 +2,7 @@ import io
 import logging
 import time
 from enum import Enum
-from typing import Any, Callable, Dict, Tuple
+from typing import Any, Callable, Dict, Optional, Tuple
 
 import gym
 import numpy as np
@@ -90,13 +90,19 @@ class GeometryDash(gym.Env):
         return np.array(img)
 
     @property
-    def done(self) -> bool:
+    def done(self, img: Optional[np.array]=None) -> bool:
+        if img:
+            return not np.any(img.squeeze(-1)[:,210:240] == 186)
         return not np.any(self.observation.squeeze(-1)[:,210:240] == 186)
     
     @property
-    def retry_clickable(self) -> bool:
+    def retry_clickable(self, img: Optional[np.array]=None) -> bool:
+        if img:
+            return img[200][300][0] == 255
         return self.observation[200][300][0] == 255
 
     @property
-    def is_flying(self) -> bool:
+    def is_flying(self, img: Optional[np.array]=None) -> bool:
+        if img:
+            return not np.any(img.squeeze(-1)[:,210:240] == 218)
         return not np.any(self.observation.squeeze(-1)[:,210:240] == 218)
