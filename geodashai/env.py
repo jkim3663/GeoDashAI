@@ -46,7 +46,10 @@ class GeometryDash(gym.Env):
         self._init_browser()
 
     def _init_browser(self) -> None:
+        self.driver.set_window_size(600, 480)
         self.driver.get('https://games-online.io/game/Geometry_Jump/')
+        self.driver.execute_script('document.getElementById("#canvas").width=600')
+        self.driver.execute_script('document.getElementById("#canvas").height=400')
             
         try:
             WebDriverWait(self.driver, 60).until(
@@ -56,9 +59,6 @@ class GeometryDash(gym.Env):
             self.driver.quit()
             raise TimeoutError()
 
-        self.driver.set_window_size(600, 480)
-        self.driver.execute_script('document.getElementById("#canvas").width=600')
-        self.driver.execute_script('document.getElementById("#canvas").height=400')
 
     def step(self, action: int) -> Tuple[np.array, float, bool, Dict[str, Any]]:
         pass
@@ -89,19 +89,16 @@ class GeometryDash(gym.Env):
         img = Image.open(io.BytesIO(self.driver.get_screenshot_as_png())).convert('L')
         return np.array(img)
 
-    @property
     def done(self, img: Optional[np.array]=None) -> bool:
         if img:
             return not np.any(img.squeeze(-1)[:,210:240] == 186)
         return not np.any(self.observation.squeeze(-1)[:,210:240] == 186)
     
-    @property
     def retry_clickable(self, img: Optional[np.array]=None) -> bool:
         if img:
-            return img[200][300][0] == 255
-        return self.observation[200][300][0] == 255
+            return img[200][300] == 255
+        return self.observation[200][300] == 255
 
-    @property
     def is_flying(self, img: Optional[np.array]=None) -> bool:
         if img:
             return not np.any(img.squeeze(-1)[:,210:240] == 218)
