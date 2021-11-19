@@ -62,6 +62,7 @@ class GeometryDash(gym.Env):
 
     def step(self, action: int) -> Tuple[np.array, float, bool, Dict[str, Any]]:
         pass
+        # major part
         # return observation, reward, done, info
 
     def reset(self) -> np.array:
