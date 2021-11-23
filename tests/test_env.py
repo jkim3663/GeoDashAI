@@ -12,7 +12,7 @@ def image_to_numpy(path: Union[Path, str]) -> np.array:
 
 @pytest.fixture(scope='class')
 def driver(request):
-    request.cls.env = GeometryDash()
+    request.cls.env = GeometryDash(headless=True)
     yield
     request.cls.env.close()
 
