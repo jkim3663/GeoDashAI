@@ -92,7 +92,8 @@ class GeometryDash(gym.Env):
     def done(self, img: Optional[np.array]=None) -> bool:
         if img:
             return not np.any(img.squeeze(-1)[:,210:240] == 186)
-        return not np.any(self.observation.squeeze(-1)[:,210:240] == 186)
+        # return not np.any(self.observation.squeeze(-1)[:,210:240] == 186)
+        return np.any(np.squeeze(self.observation)[:,210:240] == 186)
     
     def retry_clickable(self, img: Optional[np.array]=None) -> bool:
         if img:
@@ -102,7 +103,8 @@ class GeometryDash(gym.Env):
     def is_flying(self, img: Optional[np.array]=None) -> bool:
         if img:
             return not np.any(img.squeeze(-1)[:,210:240] == 218)
-        return not np.any(self.observation.squeeze(-1)[:,210:240] == 218)
+        return not np.any(np.squeeze(self.observation)[:,210:240] == 218)
     
     def save_as_image(self, filename='image.jpeg') -> None:
         Image.fromarray(self.observation).save(filename)
+
