@@ -22,10 +22,11 @@ class GeometryDash(gym.Env):
     """Custom Environment that follows gym interface"""
     metadata = {'render.modes': ['human']}
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         super(GeometryDash, self).__init__()
         
         options = Options()
+        options.add_argument("headless") if kwargs.get('headless', False) else None
         options.add_argument("disable-extensions")
         options.add_argument("disable-popup-blocking")
         options.add_argument("disable-default-apps")
