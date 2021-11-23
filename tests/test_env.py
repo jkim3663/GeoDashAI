@@ -45,5 +45,8 @@ class EnvTest(unittest.TestCase):
 
     def test_env_is_flying(self):
         path_is_flying = list(self._test_root.glob('images/is_flying*'))
+        path_not_done = list(self._test_root.glob('images/not_done*'))
         for path in path_is_flying:
             assert self.env.is_flying(image_to_numpy(path)) ==  True
+        for path in path_not_done:
+            assert self.env.is_flying(image_to_numpy(path)) ==  False
