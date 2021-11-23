@@ -30,6 +30,8 @@ class GeometryDash(gym.Env):
         options.add_argument("disable-extensions")
         options.add_argument("disable-popup-blocking")
         options.add_argument("disable-default-apps")
+        options.add_argument("window-size=600,479" if not kwargs.get('headless', False) else "window-size=600,400")
+        options.add_argument("no-sandbox")
         options.add_experimental_option("excludeSwitches", ['enable-automation'])
         self.driver = webdriver.Chrome(
             service=Service(ChromeDriverManager().install()),
@@ -40,18 +42,16 @@ class GeometryDash(gym.Env):
         self.observation_space = spaces.Box(
             low=0, 
             high=255, 
-            shape=(401, 600, 1),
+            shape=(400, 600, 1),
             dtype=np.uint8
             ) #Images
 
         self._init_browser()
 
     def _init_browser(self) -> None:
-        self.driver.set_window_size(600, 480)
         self.driver.get('https://games-online.io/game/Geometry_Jump/')
         self.driver.execute_script('document.getElementById("#canvas").width=600')
         self.driver.execute_script('document.getElementById("#canvas").height=400')
-            
         try:
             WebDriverWait(self.driver, 60).until(
                 EC.presence_of_element_located((By.XPATH, '//div[@id="loader"][contains(@style, "display: none")]'))
@@ -59,8 +59,7 @@ class GeometryDash(gym.Env):
         except:
             self.driver.quit()
             raise TimeoutError()
-
-
+        
     def step(self, action: int) -> Tuple[np.array, float, bool, Dict[str, Any]]:
         pass
         # major part
@@ -104,3 +103,6 @@ class GeometryDash(gym.Env):
         if img:
             return not np.any(img.squeeze(-1)[:,210:240] == 218)
         return not np.any(self.observation.squeeze(-1)[:,210:240] == 218)
+    
+    def save_as_image(self, filename='image.jpeg') -> None:
+        Image.fromarray(self.observation).save(filename)
