@@ -17,6 +17,8 @@ jobs:
         with:
           python-version: '3.7 - 3.9'
           architecture: x64
+      - name: Install Google Chrome
+        uses: browser-actions/setup-chrome@latest
       - name: Checkout Code
         uses: actions/checkout@v2
         with:
