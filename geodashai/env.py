@@ -96,8 +96,8 @@ class GeometryDash(gym.Env):
     
     def retry_clickable(self, img: Optional[np.array]=None) -> bool:
         if img:
-            return img[200][300] == 255
-        return self.observation[200][300] == 255
+            return img[282][244] == 255
+        return self.observation[282][244] == 255
 
     def is_flying(self, img: Optional[np.array]=None) -> bool:
         if img:
